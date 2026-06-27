@@ -65,6 +65,7 @@ def main():
     parser.add_argument("--reading-list", default="reading_list.md")
     parser.add_argument("--maybe", default="maybe_relevant.md")
     parser.add_argument("--ics", default="schedule.ics")
+    parser.add_argument("--links", default="paper_links.txt")
     args = parser.parse_args()
 
     with open(args.candidates) as f:
@@ -92,6 +93,16 @@ def main():
             "These papers matched the keyword search but were judged not directly relevant.",
         ))
     print(f"  {args.maybe}: {len(rejected)} papers")
+
+    all_papers = confirmed + rejected
+    links = [
+        p["paper_url"].replace("openreview.net/forum", "openreview.net/pdf")
+        for p in all_papers
+        if p.get("paper_url")
+    ]
+    with open(args.links, "w") as f:
+        f.write("\n".join(links) + "\n")
+    print(f"  {args.links}: {len(links)} links")
 
     ics_data = render_ics(confirmed)
     with open(args.ics, "wb") as f:

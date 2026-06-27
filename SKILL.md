@@ -7,11 +7,12 @@ pip install rank_bm25 icalendar
 
 ## Overview
 
-Given a user's natural language description of their research interests, search the conference JSON data for relevant papers using BM25 ranking over titles and abstracts. Then verify each candidate to filter out false positives. Produce three outputs:
+Given a user's natural language description of their research interests, search the conference JSON data for relevant papers using BM25 ranking over titles and abstracts. Then verify each candidate to filter out false positives. Produce four outputs:
 
 1. `reading_list.md` — confirmed relevant papers with metadata
 2. `schedule.ics` — calendar events for confirmed papers that have session times
 3. `maybe_relevant.md` — papers that matched BM25 but failed verification, for human review
+4. `paper_links.txt` — plain list of PDF links for all papers (confirmed first, then rejected)
 
 ## CLI Tools
 
@@ -42,7 +43,8 @@ Render annotated candidates into the three output files.
 python render.py candidates.json \
     --reading-list reading_list.md \
     --maybe maybe_relevant.md \
-    --ics schedule.ics
+    --ics schedule.ics \
+    --links paper_links.txt
 ```
 
 Expects each entry in the JSON to have a `status` field set to `"confirmed"` or `"rejected"`, and optionally a `reason` field. Papers still marked `"pending"` are treated as confirmed.
